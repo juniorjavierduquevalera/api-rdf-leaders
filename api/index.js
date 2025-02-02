@@ -5,6 +5,9 @@ import connectDB from "./database/connection.js";
 import userRoutes from "./routes/users.routes.js";
 import leaderRoutes from "./routes/leader.routes.js";
 import guestRoutes from "./routes/guest.routes.js";
+import reviewRoutes from "./routes/review.routes.js";
+
+
 
 
 dotenv.config();
@@ -21,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", userRoutes);
 app.use("/api/leaders", leaderRoutes);
 app.use("/api/guests", guestRoutes);
-
+app.use("/api/reviews", reviewRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);

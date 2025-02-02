@@ -1,11 +1,11 @@
-import Leader from "../models/leaders.model.js";
-import { validateLeaderData } from "../validations/leader.validations.js";
+import Review from "../models/review.model.js";
+import { validateReviewData } from "../validations/review.validations.js";
 
-export const createLeader = async (req, res) => {
+export const createReview = async (req, res) => {
   try {
-    const { name, whatsapp } = req.body;
+    const { name, message } = req.body;
 
-    const validationErrors = validateLeaderData({ name, whatsapp });
+    const validationErrors = validateReviewData({ name, message });
     if (validationErrors) {
       return res.status(400).send({
         status: "error",
@@ -14,111 +14,110 @@ export const createLeader = async (req, res) => {
       });
     }
 
-    const newLeader = new Leader({ name, whatsapp });
-
-    await newLeader.save();
+    const newReview = new Review({ name, message });
+    await newReview.save();
 
     res.status(201).send({
       status: "success",
-      leader: newLeader,
+      review: newReview,
     });
   } catch (error) {
-    console.error("Error al crear el líder:", error.message);
+    console.error("Error al crear la reseña:", error.message);
     res.status(500).send({
       status: "error",
       message: "Error interno del servidor.",
     });
   }
 };
-export const getLeaders = async (req, res) => {
+export const getReviews = async (req, res) => {
   try {
-    const leaders = await Leader.find().sort({ createdAt: -1 });
+    const reviews = await Review.find().sort({ createdAt: -1 });
 
     res.status(200).send({
       status: "success",
-      leaders,
+      reviews,
     });
   } catch (error) {
-    console.error("Error al obtener los líderes:", error.message);
+    console.error("Error al obtener las reseñas:", error.message);
     res.status(500).send({
       status: "error",
       message: "Error interno del servidor.",
     });
   }
 };
-export const getLeaderById = async (req, res) => {
+export const getReviewById = async (req, res) => {
   try {
     const { id } = req.params;
-    const leader = await Leader.findById(id);
+    const review = await Review.findById(id);
 
-    if (!leader) {
+    if (!review) {
       return res.status(404).send({
         status: "error",
-        message: "Líder no encontrado.",
+        message: "Reseña no encontrada.",
       });
     }
 
     res.status(200).send({
       status: "success",
-      leader,
+      review,
     });
   } catch (error) {
-    console.error("Error al obtener el líder:", error.message);
+    console.error("Error al obtener la reseña:", error.message);
     res.status(500).send({
       status: "error",
       message: "Error interno del servidor.",
     });
   }
 };
-export const updateLeader = async (req, res) => {
+export const updateReview = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, whatsapp } = req.body;
+    const { name, message } = req.body;
 
-    const updatedLeader = await Leader.findByIdAndUpdate(
+    const updatedReview = await Review.findByIdAndUpdate(
       id,
-      { name, whatsapp },
+      { name, message },
       { new: true, runValidators: true }
     );
 
-    if (!updatedLeader) {
+    if (!updatedReview) {
       return res.status(404).send({
         status: "error",
-        message: "Líder no encontrado.",
+        message: "Reseña no encontrada.",
       });
     }
 
     res.status(200).send({
       status: "success",
-      leader: updatedLeader,
+      review: updatedReview,
     });
   } catch (error) {
-    console.error("Error al actualizar el líder:", error.message);
+    console.error("Error al actualizar la reseña:", error.message);
     res.status(500).send({
       status: "error",
       message: "Error interno del servidor.",
     });
   }
 };
-export const deleteLeader = async (req, res) => {
+export const deleteReview = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedLeader = await Leader.findByIdAndDelete(id);
+    const deletedReview = await Review.findByIdAndDelete(id);
 
-    if (!deletedLeader) {
+    if (!deletedReview) {
       return res.status(404).send({
         status: "error",
-        message: "Líder no encontrado.",
+        message: "Reseña no encontrada.",
       });
     }
 
     res.status(200).send({
       status: "success",
-      message: "Líder eliminado exitosamente.",
+      message: "Reseña eliminada exitosamente.",
     });
   } catch (error) {
-    console.error("Error al eliminar el líder:", error.message);
+    console.error("Error al eliminar la reseña:", error.message);
     res.status(500).send({
       status: "error",
       message: "Error interno del servidor.",
