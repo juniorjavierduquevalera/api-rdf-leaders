@@ -3,7 +3,15 @@ import { validateReviewData } from "../validations/review.validations.js";
 
 export const createReview = async (req, res) => {
   try {
-    const { name, message } = req.body;
+    const { message } = req.body;
+    const { name } = req.user;
+
+    if (!message) {
+      return res.status(400).send({
+        status: "error",
+        message: "El mensaje es obligatorio.",
+      });
+    }
 
     const validationErrors = validateReviewData({ name, message });
     if (validationErrors) {
@@ -72,20 +80,36 @@ export const getReviewById = async (req, res) => {
 export const updateReview = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, message } = req.body;
+    const { message } = req.body;
+    const { name } = req.user;
+
+    if (!message) {
+      return res.status(400).send({
+        status: "error",
+        message: "El mensaje es obligatorio.",
+      });
+    }
+
+    const existingReview = await Review.findById(id);
+    if (!existingReview) {
+      return res.status(404).send({
+        status: "error",
+        message: "Reseña no encontrada.",
+      });
+    }
+
+    if (existingReview.name !== name) {
+      return res.status(403).send({
+        status: "error",
+        message: "No tienes permiso para modificar esta reseña.",
+      });
+    }
 
     const updatedReview = await Review.findByIdAndUpdate(
       id,
       { name, message },
       { new: true, runValidators: true }
     );
-
-    if (!updatedReview) {
-      return res.status(404).send({
-        status: "error",
-        message: "Reseña no encontrada.",
-      });
-    }
 
     res.status(200).send({
       status: "success",
