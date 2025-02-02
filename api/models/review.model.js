@@ -7,6 +7,12 @@ const reviewSchema = new Schema(
       required: true,
       trim: true,
     },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
     message: {
       type: String,
       required: true,
@@ -14,7 +20,7 @@ const reviewSchema = new Schema(
       minlength: [2, "El mensaje debe tener al menos 10 caracteres."],
     },
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
 
 const Review = model("Review", reviewSchema, "reviews");

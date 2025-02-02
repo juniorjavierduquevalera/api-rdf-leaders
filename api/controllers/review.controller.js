@@ -4,7 +4,7 @@ import { validateReviewData } from "../validations/review.validations.js";
 export const createReview = async (req, res) => {
   try {
     const { message } = req.body;
-    const { name } = req.user;
+    const { name, email } = req.user;
 
     if (!message) {
       return res.status(400).send({
@@ -22,7 +22,7 @@ export const createReview = async (req, res) => {
       });
     }
 
-    const newReview = new Review({ name, message });
+    const newReview = new Review({ name, email, message });
     await newReview.save();
 
     res.status(201).send({
@@ -81,7 +81,7 @@ export const updateReview = async (req, res) => {
   try {
     const { id } = req.params;
     const { message } = req.body;
-    const { name } = req.user;
+    const { email } = req.user;
 
     if (!message) {
       return res.status(400).send({
@@ -98,7 +98,7 @@ export const updateReview = async (req, res) => {
       });
     }
 
-    if (existingReview.name !== name) {
+    if (existingReview.email !== email) {
       return res.status(403).send({
         status: "error",
         message: "No tienes permiso para modificar esta reseña.",
@@ -107,7 +107,7 @@ export const updateReview = async (req, res) => {
 
     const updatedReview = await Review.findByIdAndUpdate(
       id,
-      { name, message },
+      { message },
       { new: true, runValidators: true }
     );
 
@@ -126,15 +126,24 @@ export const updateReview = async (req, res) => {
 export const deleteReview = async (req, res) => {
   try {
     const { id } = req.params;
+    const { email } = req.user;
 
-    const deletedReview = await Review.findByIdAndDelete(id);
-
-    if (!deletedReview) {
+    const existingReview = await Review.findById(id);
+    if (!existingReview) {
       return res.status(404).send({
         status: "error",
         message: "Reseña no encontrada.",
       });
     }
+
+    if (existingReview.email !== email) {
+      return res.status(403).send({
+        status: "error",
+        message: "No tienes permiso para eliminar esta reseña.",
+      });
+    }
+
+    await Review.findByIdAndDelete(id);
 
     res.status(200).send({
       status: "success",
