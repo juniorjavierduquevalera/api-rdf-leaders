@@ -23,6 +23,7 @@ export const register = async (req, res) => {
       name: params.name,
       email: params.email,
       password: hashedPassword,
+      role: "usuario",
     });
 
     await newUser.save();
@@ -31,6 +32,7 @@ export const register = async (req, res) => {
       id: newUser._id.toString(),
       name: newUser.name,
       email: newUser.email,
+      role: newUser.role,
     });
 
     return res.status(200).send({
@@ -40,6 +42,7 @@ export const register = async (req, res) => {
         id: newUser._id.toString(),
         name: newUser.name,
         email: newUser.email,
+        role: newUser.role,
       },
       token,
     });
@@ -70,6 +73,7 @@ export const login = async (req, res) => {
       id: user._id.toString(),
       name: user.name,
       email: user.email,
+      role: user.role,
     });
 
     return res.status(200).send({
@@ -79,6 +83,7 @@ export const login = async (req, res) => {
         id: user._id.toString(),
         name: user.name,
         email: user.email,
+        role: user.role,
       },
       token,
     });
