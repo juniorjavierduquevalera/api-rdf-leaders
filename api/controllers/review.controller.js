@@ -3,13 +3,20 @@ import { validateReviewData } from "../validations/review.validations.js";
 
 export const createReview = async (req, res) => {
   try {
-    const { message } = req.body;
-    const { name, email } = req.user;
+    const { message, slug } = req.body;
+    const { id: userId, name, email } = req.user;
 
-    if (!message) {
+    if (!userId) {
+      return res.status(401).send({
+        status: "error",
+        message: "No autorizado. El usuario debe estar autenticado.",
+      });
+    }
+
+    if (!message || !slug) {
       return res.status(400).send({
         status: "error",
-        message: "El mensaje es obligatorio.",
+        message: "El mensaje y el slug son obligatorios.",
       });
     }
 
@@ -22,7 +29,7 @@ export const createReview = async (req, res) => {
       });
     }
 
-    const newReview = new Review({ name, email, message });
+    const newReview = new Review({ userId, name, email, message, slug });
     await newReview.save();
 
     res.status(201).send({
@@ -80,13 +87,13 @@ export const getReviewById = async (req, res) => {
 export const updateReview = async (req, res) => {
   try {
     const { id } = req.params;
-    const { message } = req.body;
-    const { email } = req.user;
+    const { message, slug } = req.body;
+    const { id: userId } = req.user;
 
-    if (!message) {
+    if (!message && !slug) {
       return res.status(400).send({
         status: "error",
-        message: "El mensaje es obligatorio.",
+        message: "Debe proporcionar al menos un campo para actualizar.",
       });
     }
 
@@ -98,19 +105,28 @@ export const updateReview = async (req, res) => {
       });
     }
 
-    if (existingReview.email !== email) {
+    if (existingReview.userId.toString() !== userId) {
       return res.status(403).send({
         status: "error",
         message: "No tienes permiso para modificar esta reseña.",
       });
     }
 
-    const updatedReview = await Review.findByIdAndUpdate(
-      id,
-      { message },
-      { new: true, runValidators: true }
-    );
+    const updateFields = {};
+    if (message) updateFields.message = message;
+    if (slug) updateFields.slug = slug;
 
+    const updatedReview = await Review.findByIdAndUpdate(id, updateFields, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedReview) {
+      return res.status(404).send({
+        status: "error",
+        message: "No se pudo actualizar la reseña.",
+      });
+    }
     res.status(200).send({
       status: "success",
       review: updatedReview,
