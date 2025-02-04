@@ -13,8 +13,7 @@ const reviewSchema = new Schema(
       trim: true,
     },
     slug: {
-      type: String,
-      unique: true,
+      type: String,      
       trim: true,
       lowercase: true,
     },
