@@ -45,7 +45,9 @@ export const createGuest = async (req, res) => {
 };
 export const getGuests = async (req, res) => {
   try {
-    const guests = await Guest.find().populate("leader", "name whatsapp");
+    const guests = await Guest.find()
+      .populate("leader", "name whatsapp")
+      .sort({ createdAt: -1 }); 
 
     res.status(200).send({
       status: "success",
