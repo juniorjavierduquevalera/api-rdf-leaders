@@ -2,48 +2,6 @@ import Guest from "../models/guest.model.js";
 import Leader from "../models/leaders.model.js";
 import { validateGuestData } from "../validations/guest.validations.js";
 
-// export const createGuest = async (req, res) => {
-//   try {
-//     const { name, whatsapp, leaderId } = req.body;
-
-//     const validationErrors = validateGuestData({ name, whatsapp, leaderId });
-//     if (validationErrors) {
-//       return res.status(400).send({
-//         status: "error",
-//         message: "Errores en la validación.",
-//         errors: validationErrors,
-//       });
-//     }
-
-//     const leader = await Leader.findById(leaderId);
-//     if (!leader) {
-//       return res.status(404).send({
-//         status: "error",
-//         message: "Líder no encontrado.",
-//       });
-//     }
-
-//     const newGuest = new Guest({
-//       name,
-//       whatsapp,
-//       leader: leaderId,
-//     });
-
-//     await newGuest.save();
-
-//     res.status(201).send({
-//       status: "success",
-//       guest: newGuest,
-//     });
-//   } catch (error) {
-//     console.error("Error al crear el invitado:", error.message);
-//     res.status(500).send({
-//       status: "error",
-//       message: "Error interno del servidor.",
-//     });
-//   }
-// };
-
 export const createGuest = async (req, res) => {
   try {
     const { name, whatsapp, leaderId, status, absences } = req.body;
