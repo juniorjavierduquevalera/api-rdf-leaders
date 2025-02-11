@@ -46,7 +46,7 @@ import { validateGuestData } from "../validations/guest.validations.js";
 
 export const createGuest = async (req, res) => {
   try {
-    const { name, whatsapp, leaderId } = req.body;
+    const { name, whatsapp, leaderId, status, absences } = req.body;
 
     const validationErrors = validateGuestData({ name, whatsapp, leaderId });
     if (validationErrors) {
@@ -69,6 +69,8 @@ export const createGuest = async (req, res) => {
       name,
       whatsapp,
       leader: leaderId,
+      status: status || "activo",
+      absences: absences || 0,
     });
 
     await newGuest.save();
@@ -79,6 +81,8 @@ export const createGuest = async (req, res) => {
         _id: newGuest._id,
         name: newGuest.name,
         whatsapp: newGuest.whatsapp,
+        status: newGuest.status,
+        absences: newGuest.absences,
         leader: {
           _id: leader._id,
           name: leader.name,
