@@ -3,7 +3,7 @@ import { verifyToken } from "./auth.js";
 export const verifyAdmin = (req, res, next) => {
   try {
     verifyToken(req, res, () => {
-      if (req.user?.role !== "admin") {
+      if (req.user?.role !== "administrador") {
         return res.status(403).json({
           status: "error",
           message:
