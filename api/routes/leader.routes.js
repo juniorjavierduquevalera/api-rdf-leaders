@@ -6,17 +6,18 @@ import {
   updateLeader,
   deleteLeader,
 } from "../controllers/leader.controller.js";
+import { verifyAuth } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.post("/", createLeader);
+router.post("/",verifyAuth, createLeader);
 
-router.get("/", getLeaders);
+router.get("/",verifyAuth, getLeaders);
 
-router.get("/:id", getLeaderById);
+router.get("/:id",verifyAuth, getLeaderById);
 
-router.put("/:id", updateLeader);
+router.put("/:id",verifyAuth, updateLeader);
 
-router.delete("/:id", deleteLeader);
+router.delete("/:id",verifyAuth, deleteLeader);
 
 export default router;
