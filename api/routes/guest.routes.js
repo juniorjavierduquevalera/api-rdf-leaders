@@ -6,17 +6,18 @@ import {
   updateGuest,
   deleteGuest,
 } from "../controllers/guest.controller.js";
+import { verifyAuth } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.post("/", createGuest);
+router.post("/", verifyAuth, createGuest);
 
-router.get("/", getGuests);
+router.get("/", verifyAuth, getGuests);
 
-router.get("/:id", getGuestById);
+router.get("/:id", verifyAuth, getGuestById);
 
-router.put("/:id", updateGuest);
+router.put("/:id", verifyAuth, updateGuest);
 
-router.delete("/:id", deleteGuest);
+router.delete("/:id", verifyAuth, deleteGuest);
 
 export default router;
